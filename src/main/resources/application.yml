@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://183.111.199.217/benewdev2025
+    username: benewdev2025
+    password: qb30nh@!
+
+mybatis:
+  type-aliases-package: dev.benew.filmbiblecrawling.dto
+  mapper-locations: classpath:/mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: false
+
+
+youtube:
+  application-name: filmbible-crawling
+  api-key: AIzaSyAvFbpJN8CCQbBYBJfn55sMhwy1vZ8UZQo
+  channel-id: UCijh44bpBtXO52xkLhb9vUQ

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.benew.filmbiblecrawling.mapper.PlayListMapper">
+    <resultMap id="playListMap" type="dev.benew.filmbiblecrawling.dto.PlayListDto">
+        <id column="fb_playlist_idx" property="playListIdx"/>
+        <result column="fb_playlist_id" property="playListId"/>
+        <result column="fb_playlist_title" property="playListTitle"/>
+        <result column="fb_playlist_thumb" property="playListThumb"/>
+        <result column="fb_playlist_full_path" property="playListFullPath"/>
+        <result column="fb_playlist_reg_date" property="regDate"/>
+    </resultMap>
+
+
+    <select id="findAllPlayListId" resultType="String">
+        select
+            fb_playlist_id
+        from FB_PLAYLIST
+    </select>
+
+    <select id="findByPlayListId" resultMap="playListMap">
+        select
+            *
+        from FB_PLAYLIST
+        where fb_playlist_id = #{playListId}
+    </select>
+
+    <insert id="savePlayList">
+        insert into FB_PLAYLIST (
+               fb_playlist_id,
+               fb_playlist_title,
+               fb_playlist_thumb,
+               fb_playlist_full_path
+        ) values (
+               #{playListId},
+               #{playListTitle},
+               #{playListThumb},
+               #{playListFullPath}
+         )
+    </insert>
+
+</mapper>

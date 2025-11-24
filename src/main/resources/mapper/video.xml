@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.benew.filmbiblecrawling.mapper.VideoMapper">
+    <resultMap id="videoMap" type="dev.benew.filmbiblecrawling.dto.VideoDto">
+        <id column="fb_video_id" property="videoId" />
+        <result column="fb_video_title" property="videoTitle"/>
+        <result column="fb_video_thumb" property="videoThumb" />
+        <result column="fb_video_full_path" property="videoFullPath" />
+        <result column="fb_video_reg_date" property="videoRegDate" />
+    </resultMap>
+
+
+    <select id="findAllVideo" resultMap="videoMap">
+        select
+            *
+        from FB_VIDEO
+    </select>
+
+    <select id="findByVideoId" resultMap="videoMap">
+        select
+            *
+        from FB_VIDEO
+        where fb_video_id = #{videoId}
+    </select>
+
+    <insert id="saveVideo">
+        insert into FB_VIDEO (
+               fb_video_id,
+               fb_video_title,
+               fb_video_thumb,
+               fb_video_full_path,
+               fb_video_type,
+               fb_video_play_time,
+               fb_video_view,
+               fb_video_like,
+               fb_video_created_date
+        ) values (
+                #{videoId},
+                #{videoTitle},
+                #{videoThumb},
+                #{videoFullPath},
+                #{videoType},
+                #{videoPlayTime},
+                #{videoView},
+                #{videoLike},
+                #{videoCreatedDate}
+         )
+    </insert>
+
+    <update id="updateVideoDetailInfo">
+        update FB_VIDEO
+        set
+            (
+                fb_video_view = #{view},
+                fb_video_like = #{like}
+            )
+        where fb_video_id = #{videoId}
+    </update>
+</mapper>
