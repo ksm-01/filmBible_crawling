@@ -4,6 +4,8 @@ import dev.benew.filmbiblecrawling.dto.VideoDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Mapper
@@ -17,8 +19,12 @@ public interface VideoMapper {
     Boolean saveVideo(VideoDto videoDto);
 
     Boolean updateVideoDetailInfo(
-            @Param("videoId") String videoId,
+            @Param("id") String id,
+            @Param("playTime") LocalTime playTime,
+            @Param("createdDate") LocalDateTime createdDate,
+            @Param("viewDisable") Boolean viewDisable,
             @Param("view") Long view,
+            @Param("likeDisable") Boolean likeDisable,
             @Param("like") Long like
     );
 }

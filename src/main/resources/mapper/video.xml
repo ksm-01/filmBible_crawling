@@ -2,17 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="dev.benew.filmbiblecrawling.mapper.VideoMapper">
     <resultMap id="videoMap" type="dev.benew.filmbiblecrawling.dto.VideoDto">
-        <id column="fb_video_id" property="videoId" />
+        <id column="fb_video_idx" property="videoIdx" />
+        <result column="fb_video_id" property="videoId" />
         <result column="fb_video_title" property="videoTitle"/>
         <result column="fb_video_thumb" property="videoThumb" />
-        <result column="fb_video_full_path" property="videoFullPath" />
+        <result column="fb_video_full_path" property="videoUrl" />
+        <result column="fb_video_type" property="videoType" />
+        <result column="fb_video_play_time" property="playTime" />
+
+        <result column="fb_video_view" property="videoView" />
+        <result column="fb_video_view_disable" property="viewDisable" />
+        <result column="fb_video_like" property="videoLike" />
+        <result column="fb_video_like_disable" property="viewDisable" />
+        <result column="fb_video_position" property="videoPosition" />
+        <result column="fb_video_status" property="videoStatus" />
+
+        <result column="fb_video_created_date" property="videoCreateDate" />
         <result column="fb_video_reg_date" property="videoRegDate" />
+        <result column="fb_video_refresh_date" property="videoRefreshDate" />
     </resultMap>
 
 
     <select id="findAllVideo" resultMap="videoMap">
         select
-            *
+           *
         from FB_VIDEO
     </select>
 
@@ -24,36 +37,39 @@
     </select>
 
     <insert id="saveVideo">
-        insert into FB_VIDEO (
-               fb_video_id,
-               fb_video_title,
-               fb_video_thumb,
-               fb_video_full_path,
-               fb_video_type,
-               fb_video_play_time,
-               fb_video_view,
-               fb_video_like,
-               fb_video_created_date
-        ) values (
-                #{videoId},
-                #{videoTitle},
-                #{videoThumb},
-                #{videoFullPath},
-                #{videoType},
-                #{videoPlayTime},
-                #{videoView},
-                #{videoLike},
-                #{videoCreatedDate}
-         )
+       insert into FB_VIDEO (
+             fb_video_id,
+             fb_video_title,
+             fb_video_thumb,
+             fb_video_full_path,
+             fb_video_type,
+             fb_video_position,
+             fb_video_status
+       ) values (
+            #{videoId},
+            #{videoTitle},
+            #{videoThumb},
+            #{videoUrl},
+            #{videoType},
+            #{videoPosition},
+            #{videoStatus}
+       )
     </insert>
 
     <update id="updateVideoDetailInfo">
         update FB_VIDEO
         set
-            (
-                fb_video_view = #{view},
-                fb_video_like = #{like}
-            )
-        where fb_video_id = #{videoId}
+                fb_video_play_time= #{playTime},
+                fb_video_created_date = #{createdDate},
+                fb_video_view_disable = #{viewDisable},
+                fb_video_like_disable = #{likeDisable},
+                <if test="view != null">
+                    fb_video_view = #{view},
+                </if>
+                <if test="like != null">
+                    fb_video_like = #{like},
+                </if>
+                fb_video_refresh_date = now()
+        where fb_video_id = #{id}
     </update>
 </mapper>

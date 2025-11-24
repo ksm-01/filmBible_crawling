@@ -13,5 +13,7 @@ public class PlayListDto {
     private String playListTitle;
     private String playListThumb;
     private String playListFullPath;
+    private Long videoCount;
     private LocalDateTime regDate;
+    private LocalDateTime createdDate;
 }

@@ -1,5 +1,6 @@
 package dev.benew.filmbiblecrawling;
 
+import dev.benew.filmbiblecrawling.service.VideoCrawlingService;
 import dev.benew.filmbiblecrawling.service.YoutubeApiService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.auth.AuthStateCacheable;
@@ -15,37 +16,16 @@ import java.security.GeneralSecurityException;
 class FilmbibleCrawlingApplicationTests {
 
     @Autowired
-    YoutubeApiService youtubeApiService;
+    VideoCrawlingService  videoCrawlingService;
 
     @Test
     void contextLoads() {
     }
 
-    // 재생 목록 가져와서 저장하기
     @Test
-    void findPlayList() throws GeneralSecurityException, IOException {
-        youtubeApiService.searchPlayList();
+    void videoCrawling() throws GeneralSecurityException, IOException {
+        videoCrawlingService.crawlingTotal();
     }
 
-    // 재생목록 비디오 저장
-    @Test
-    void saveVideo() throws GeneralSecurityException, IOException {
-        youtubeApiService.newVideoCrawler();
-    }
 
-    // 채널 정보 가져오기
-    @Test
-    void findChannel() throws GeneralSecurityException, IOException {
-        youtubeApiService.searchChannel("필름바이블");
-    }
-
-//    @Test
-//    void updateVideo() throws GeneralSecurityException, IOException {
-//        youtubeApiService.likeAndView();
-//    }
-
-    @Test
-    void shorts() throws GeneralSecurityException, IOException {
-        youtubeApiService.test();
-    }
 }

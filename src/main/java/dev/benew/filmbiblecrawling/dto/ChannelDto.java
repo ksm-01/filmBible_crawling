@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 public class ChannelDto {
     private String channelId;
     private String channelName;
-    private Integer channelSubscriber;
+    private Long channelSubscriber;
+
+    private LocalDateTime createdDate;
     private LocalDateTime channelRegDate;
 }

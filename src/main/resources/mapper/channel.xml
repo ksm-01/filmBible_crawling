@@ -5,6 +5,7 @@
         <id column="fb_channel_id" property="channelId" />
         <result column="fb_channel_name" property="channelName" />
         <result column="fb_channel_subscriber" property="channelSubscriber" />
+        <result column="fb_channel_created_date" property="createdDate" />
         <result column="fb_channel_reg_date" property="channelRegDate" />
     </resultMap>
 
@@ -12,11 +13,13 @@
         insert into FB_CHANNEL (
                 fb_channel_id,
                 fb_channel_name,
-                fb_channel_subscriber
+                fb_channel_subscriber,
+                fb_channel_created_date
         ) values (
                 #{channelId},
                 #{channelName},
-                #{channelSubscriber}
+                #{channelSubscriber},
+                #{createdDate}
         )
     </insert>
 

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.benew.filmbiblecrawling.mapper.ThumbMapper">
+    <resultMap id="thumbMap" type="dev.benew.filmbiblecrawling.dto.ThumbDto">
+        <id column="fb_vt_idx" property="vtIdx" />
+        <result column="fb_vt_video_id" property="videoId"/>
+        <result column="fb_vt_thumb" property="thumbUrl" />
+        <result column="fb_vt_size_type" property="thumbType" />
+    </resultMap>
+
+    <insert id="saveVideoThumb">
+        insert into FB_VIDEO_THUMB
+            (
+              fb_vt_video_id,
+              fb_vt_thumb,
+              fb_vt_size_type
+            ) values
+            <foreach collection="thumbList" item="item" separator=",">
+                (
+                   #{item.videoId},
+                   #{item.thumbUrl},
+                   #{item.thumbType}
+                )
+            </foreach>
+    </insert>
+</mapper>

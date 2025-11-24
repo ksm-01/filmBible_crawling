@@ -7,6 +7,7 @@
         <result column="fb_playlist_title" property="playListTitle"/>
         <result column="fb_playlist_thumb" property="playListThumb"/>
         <result column="fb_playlist_full_path" property="playListFullPath"/>
+        <result column="fb_playlist_video_count" property="videoCount" />
         <result column="fb_playlist_reg_date" property="regDate"/>
     </resultMap>
 
@@ -29,12 +30,16 @@
                fb_playlist_id,
                fb_playlist_title,
                fb_playlist_thumb,
-               fb_playlist_full_path
+               fb_playlist_full_path,
+               fb_playlist_created_date,
+               fb_playlist_video_count
         ) values (
                #{playListId},
                #{playListTitle},
                #{playListThumb},
-               #{playListFullPath}
+               #{playListFullPath},
+               #{createdDate},
+               #{videoCount}
          )
     </insert>
 

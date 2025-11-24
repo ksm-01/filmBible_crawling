@@ -9,21 +9,23 @@ import java.time.LocalTime;
 @Data
 @Builder
 public class VideoDto {
-    private String videoId;
-    private String videoTitle;
-    private String videoThumb;
-    private String videoFullPath;
-    private String videoType;
-    private LocalTime videoPlayTime;
-    private Long videoView;
-    private Long videoLike;
+   private Long videoIdx;
+   private String videoId;
+   private String videoTitle;
+   private String videoThumb;
+   private String videoUrl;
+   private String videoType;
+   private LocalTime playTime;
 
-    private String recommendType;
-    private String artistName;
-    private String category;
-    private String genre;
-    private String mood;
+   private Long videoView;
+   private Boolean viewDisable;
+   private Long videoLike;
+   private Boolean likeDisable;
+   private Long videoPosition;
+   private String videoStatus;
 
-    private LocalDateTime videoCreatedDate;
-    private LocalDateTime videoRegDate;
+   private LocalDateTime videoCreateDate;
+   private LocalDateTime videoRegDate;
+   private LocalDateTime videoRefreshDate;
+
 }

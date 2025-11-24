@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.benew.filmbiblecrawling.mapper.TagMapper">
+    <resultMap id="tagMap" type="dev.benew.filmbiblecrawling.dto.VideoTagDto">
+        <id column="fb_vt_video_id" property="videoId" />
+        <result column="fb_vt_name" property="tagName"/>
+        <result column="fb_vt_order" property="tagOrder" />
+    </resultMap>
+
+
+    <insert id="saveTag">
+        insert into FB_VIDEO_TAG (
+              fb_vt_video_id,
+              fb_vt_name,
+              fb_vt_order
+        ) values
+        <foreach collection="tagList" item="item" index="index" separator=",">
+            (
+                #{videoId},
+                #{item},
+                #{index}
+            )
+        </foreach>
+
+    </insert>
+</mapper>
