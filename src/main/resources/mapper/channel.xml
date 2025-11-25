@@ -9,6 +9,13 @@
         <result column="fb_channel_reg_date" property="channelRegDate" />
     </resultMap>
 
+    <select id="findChannelById" resultMap="channelMap">
+        select
+            *
+        from FB_CHANNEL
+        where fb_channel_id = #{channelId}
+    </select>
+
     <insert id="saveChannel">
         insert into FB_CHANNEL (
                 fb_channel_id,
@@ -22,5 +29,13 @@
                 #{createdDate}
         )
     </insert>
+
+    <update id="updateChannel">
+        update FB_CHANNEL
+            set
+                fb_channel_name = #{channelName},
+                fb_channel_subscriber = #{channelSubscriber}
+        where fb_channel_id = #{channelId}
+    </update>
 
 </mapper>

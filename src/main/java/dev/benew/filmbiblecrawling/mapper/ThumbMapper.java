@@ -9,7 +9,15 @@ import java.util.List;
 @Mapper
 public interface ThumbMapper {
 
+    ThumbDto findThumbById(
+            @Param("videoId") String videoId
+    );
+
     Boolean saveVideoThumb(
             @Param("thumbList")List<ThumbDto> thumbList
+    );
+
+    Boolean deleteThumb(
+            @Param("videoId") String videoId
     );
 }

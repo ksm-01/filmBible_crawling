@@ -7,6 +7,12 @@
         <result column="fb_vt_order" property="tagOrder" />
     </resultMap>
 
+    <select id="findTagById" resultMap="tagMap">
+        select
+            *
+        from FB_VIDEO_TAG
+        where fb_vt_video_id = #{videoId}
+    </select>
 
     <insert id="saveTag">
         insert into FB_VIDEO_TAG (
@@ -21,6 +27,10 @@
                 #{index}
             )
         </foreach>
-
     </insert>
+
+    <delete id="deleteTag">
+        delete from FB_VIDEO_TAG
+        where fb_vt_video_id = #{videoId}
+    </delete>
 </mapper>

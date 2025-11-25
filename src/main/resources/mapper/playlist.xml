@@ -8,6 +8,7 @@
         <result column="fb_playlist_thumb" property="playListThumb"/>
         <result column="fb_playlist_full_path" property="playListFullPath"/>
         <result column="fb_playlist_video_count" property="videoCount" />
+        <result column="fb_playlist_status" property="playListStatus" />
         <result column="fb_playlist_reg_date" property="regDate"/>
     </resultMap>
 
@@ -32,15 +33,26 @@
                fb_playlist_thumb,
                fb_playlist_full_path,
                fb_playlist_created_date,
-               fb_playlist_video_count
+               fb_playlist_video_count,
+               fb_playlist_status
         ) values (
                #{playListId},
                #{playListTitle},
                #{playListThumb},
                #{playListFullPath},
                #{createdDate},
-               #{videoCount}
+               #{videoCount},
+               #{playListStatus}
          )
     </insert>
+
+    <update id="updatePlayList">
+        update FB_PLAYLIST
+            set
+                fb_playlist_title = #{playListTitle},
+                fb_playlist_video_count = #{videoCount},
+                fb_playlist_status  = #{playListStatus}
+            where fb_playlist_id = #{playListId}
+    </update>
 
 </mapper>

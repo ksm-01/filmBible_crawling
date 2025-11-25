@@ -14,9 +14,13 @@ public interface VideoMapper {
 
     List<VideoDto> findAllVideo();
 
+    List<String> findAllVideoId();
+
     VideoDto findByVideoId(@Param("videoId") String videoId);
 
     Boolean saveVideo(VideoDto videoDto);
+
+    Boolean updateVideo(VideoDto videoDto);
 
     Boolean updateVideoDetailInfo(
             @Param("id") String id,

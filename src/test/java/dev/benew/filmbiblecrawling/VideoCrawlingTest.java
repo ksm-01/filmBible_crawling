@@ -16,6 +16,11 @@ public class VideoCrawlingTest {
     @Autowired
     YoutubeApiService youtubeApiService;
 
+    @Test
+    void channelInfo() throws GeneralSecurityException, IOException {
+        youtubeApiService.channelInfo();
+    }
+
     // 재생 목록 가져와서 저장하기
     @Test
     void findPlayList() throws GeneralSecurityException, IOException {
@@ -26,11 +31,6 @@ public class VideoCrawlingTest {
     @Test
     void saveVideo() throws GeneralSecurityException, IOException {
         youtubeApiService.newVideoCrawler();
-    }
-
-    @Test
-    void saveShorts() throws GeneralSecurityException, IOException {
-        youtubeApiService.saveShorts();
     }
 
     // 좋아요 조회수, 재생시간 저장
@@ -57,11 +57,11 @@ public class VideoCrawlingTest {
     void findChannel() throws GeneralSecurityException, IOException {
         youtubeApiService.searchChannel("필름바이블");
     }
-
-
-//   @Test
-//    void shorts() throws GeneralSecurityException, IOException {
-//        youtubeApiService.test();
-//    }
+    
+    // 숏츠 영상들만 가져오기
+   @Test
+    void shorts() throws GeneralSecurityException, IOException {
+        youtubeApiService.saveShorts();
+    }
 
 }

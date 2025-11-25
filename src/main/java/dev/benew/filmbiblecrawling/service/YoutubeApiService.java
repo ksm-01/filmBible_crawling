@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.text.Normalizer;
 import java.time.*;
@@ -37,6 +36,8 @@ public class YoutubeApiService {
     private String youtubeAppName;
     @Value("${youtube.channel-id}")
     private String channelId;
+    @Value("${youtube.uploadVideo-id}")
+    private String uploadVideoId;    // 채널 전체 동영상 카테고리 id
 
     private final ChannelMapper channelMapper;
     private final PlayListMapper playListMapper;
@@ -64,14 +65,16 @@ public class YoutubeApiService {
                 .build();
     }
 
-    // 필름바이블 재생목록 저장
-    public void searchPlayList() throws GeneralSecurityException, IOException {
+
+
+    // 필름바이블 재생목록 저장, 업데이트
+    public void upsertPlayList() throws GeneralSecurityException, IOException {
         YouTube youtube = this.initYoutube();
 
         YouTube.Playlists.List request = youtube.playlists()
                 .list("id,snippet, status, contentDetails")
                 .setKey(youtubeApiKey)
-                .setChannelId("UCijh44bpBtXO52xkLhb9vUQ")
+                .setChannelId(channelId)
                 .setMaxResults(50L);
 
         PlaylistListResponse response = request.execute();
@@ -87,12 +90,8 @@ public class YoutubeApiService {
             System.out.println("----------------------------");
             JsonUtil.prettyString(status);
 
-            String privacyStatus = status.getPrivacyStatus();  // public인것만
+            String privacyStatus = status.getPrivacyStatus();  // 재생목록 공개 상태
             System.out.println("status : " + privacyStatus);
-//            if (!privacyStatus.equalsIgnoreCase("public")) {
-//                continue;
-//            }
-
 
             String playlistId = playlist.getId();
             String title = snippet.getTitle();
@@ -121,10 +120,6 @@ public class YoutubeApiService {
             System.out.println("vicdeoCount:" + videoCount);
 
 
-            if(playListMapper.findByPlayListId(playlistId) != null){
-                continue;
-            }
-
             PlayListDto dto = PlayListDto.builder()
                     .playListId(playlistId)
                     .playListTitle(title)
@@ -132,47 +127,34 @@ public class YoutubeApiService {
                     .playListFullPath(playlistUrl)
                     .createdDate(createdDate)
                     .videoCount(videoCount)
+                    .playListStatus(privacyStatus)
                     .build();
 
             // 문자열 깨짐 방지
             String normalized_string = Normalizer.normalize(dto.getPlayListTitle(), Normalizer.Form.NFC);
             dto.setPlayListTitle(normalized_string);
 
-            playListMapper.savePlayList(dto);
+            // 재생목록명, 동영상 개수, 공개 상태 업데이트
+            if(playListMapper.findByPlayListId(playlistId) != null) {
+                playListMapper.updatePlayList(dto);
+            } else {
+                playListMapper.savePlayList(dto);
+            }
        }
     }
 
-    public void saveShorts() throws GeneralSecurityException, IOException {
-        YouTube youtube = this.initYoutube();
 
-        String videoId = "tVdj9p4PKfc";
-
-        YouTube.Videos.List request = youtube.videos()
-                .list("snippet,contentDetails,statistics")
-                .setId(videoId)
-                .setKey(youtubeApiKey)
-                .setFields("items(id,snippet(publishedAt),contentDetails(duration),statistics(viewCount,likeCount))");
-
-
-        VideoListResponse response = request.execute();
-
-        JsonUtil.prettyString(response);
-
-
-        System.out.println("----shorts-----------");
-//        JsonUtil.prettyString(response.getItems());
-
-    }
-
-    // 비디오 저장
-    public void newVideoCrawler() throws GeneralSecurityException, IOException {
+    // 재생목록 비디오 저장, 업데이트
+    public void UpsertVideo() throws GeneralSecurityException, IOException {
 
         YouTube youtube = this.initYoutube();
 
         List<String> idList = playListMapper.findAllPlayListId();
+        List<String> videoIdList = videoMapper.findAllVideoId().stream()
+                .map(String :: trim)
+                .toList();
 
         for (String playlistId : idList) {
-
                 YouTube.PlaylistItems.List request = youtube.playlistItems()
                         .list("id,snippet,contentDetails, status")
                         .setKey(youtubeApiKey)
@@ -229,12 +211,6 @@ public class YoutubeApiService {
                     System.out.println("videoStatus" + videoStatus);
                     String videoUrl = "https://www.youtube.com/watch?v=" + videoId;
 
-
-
-                    if (videoMapper.findByVideoId(videoId) != null) {
-                        continue;
-                    }
-
                     VideoDto videoDto = VideoDto.builder()
                             .videoId(videoId)
                             .videoTitle(videoTitle)
@@ -247,13 +223,18 @@ public class YoutubeApiService {
 
                     System.out.println("Video ID: " + videoId);
 
-
                     // 제목 깨짐 방지
                     String normalized_string = Normalizer.normalize(videoDto.getVideoTitle(), Normalizer.Form.NFC);
                     videoDto.setVideoTitle(normalized_string);
 
-                    videoMapper.saveVideo(videoDto);
-
+                    // 동영상 제목, 재생표시 순서, 공개 상태 업데이트
+                    if (videoMapper.findByVideoId(videoId) != null) {
+                        videoMapper.updateVideo(videoDto);
+                    } else {
+                        videoMapper.saveVideo(videoDto);
+                    }
+                    
+                    // 재생목록, 비디오 연결
                     if (phvMapper.countPlayListHasVideo(playlistId, videoId) == 0) {
                         phvMapper.savePlayListHasVideo(playlistId, videoId);
                     }
@@ -265,8 +246,8 @@ public class YoutubeApiService {
     }
 
 
-    // 좋아요, 조회수
-   public void likeAndView() throws GeneralSecurityException, IOException {
+    // 동영상 정보 갱신 (좋아요, 조회수 등)
+   public void updateVideoInfo() throws GeneralSecurityException, IOException {
         YouTube youtube = this.initYoutube();
 
         List<VideoDto> videoList = videoMapper.findAllVideo();
@@ -301,8 +282,6 @@ public class YoutubeApiService {
 
                // details 없을 시에 저장된 비디오정보 삭제(영상을 몇일 후 공개 되어있는 거)
                if (details == null || details.getDuration() == null) {
-
-                   // todo 재생시간 없는 비디오 삭제하기
                    return;
                }
 
@@ -348,6 +327,7 @@ public class YoutubeApiService {
         YouTube youtube = this.initYoutube();
 
         List<VideoDto> videoList = videoMapper.findAllVideo();
+
         System.out.println("videoList" + videoList);
         for (int i=0; i<videoList.size(); i += 50) {
             List<VideoDto> chunkList = videoList.subList(i, Math.min(i + 50, videoList.size()));
@@ -370,7 +350,6 @@ public class YoutubeApiService {
             ));
 
             videoMapById.forEach((videoId, video) -> {
-                log.info("       videoId:{}", videoId);
                 VideoSnippet snippet = video.getSnippet();
                 ThumbnailDetails thumbnails = snippet.getThumbnails();
 
@@ -413,39 +392,46 @@ public class YoutubeApiService {
                     thumbDtoList.add(thumbDto);
                 });
 
-                // 썸네일 저장
-                if (!thumbDtoList.isEmpty())
-                    thumbMapper.saveVideoThumb(thumbDtoList);
 
+                // 썸네일 저장
+                if (!thumbDtoList.isEmpty()) {
+                    if (thumbMapper.findThumbById(videoId) != null) {
+                        thumbMapper.deleteThumb(videoId);
+                    }
+                        thumbMapper.saveVideoThumb(thumbDtoList);
+                }
 
                 List<String> tagList = snippet.getTags();
                 System.out.println("tagList:" + tagList);
                 if (!CollectionUtils.isEmpty(tagList)) {
+                    if (tagMapper.findTagById(videoId) != null) {
+                        tagMapper.deleteTag(videoId);
+                    }
                     tagMapper.saveTag(videoId, tagList);
                 }
+
              });
         }
     }
 
+
+    // 채널 저장, 업데이트
     public void channelInfo() throws GeneralSecurityException, IOException {
 
         YouTube youtube = this.initYoutube();
 
         YouTube.Channels.List req = youtube.channels()
-                .list("id, snippet, contentDetails, statistics")
+                .list("id, snippet, statistics")
                 .setId("UCijh44bpBtXO52xkLhb9vUQ")
                 .setKey(youtubeApiKey);
 
-
         ChannelListResponse res = req.execute();
-
-
         System.out.println("channelInfo-------");
+
         JsonUtil.prettyString(res.getItems());
 
         for (Channel channel : res.getItems()) {
             ChannelSnippet snippet = channel.getSnippet();
-            ChannelContentDetails contentDetails = channel.getContentDetails();
             ChannelStatistics statistics = channel.getStatistics();
 
             String channelId = channel.getId();
@@ -454,8 +440,10 @@ public class YoutubeApiService {
             LocalDateTime createdDate = Instant.ofEpochMilli(dateTime.getValue())
                     .atZone(ZoneId.systemDefault()).toLocalDateTime();
 
+
+
             Long subCount = statistics.getSubscriberCount().longValue();
-            Long videoCount = statistics.getVideoCount().longValue();
+//            Long videoCount = statistics.getVideoCount().longValue();
 
             ChannelDto channelDto = ChannelDto.builder()
                     .channelId(channelId)
@@ -464,11 +452,99 @@ public class YoutubeApiService {
                     .createdDate(createdDate)
                     .build();
 
-            channelMapper.saveChannel(channelDto);
-
-            System.out.println("count:" + channel.getStatistics().getVideoCount());
+            // 채널명, 구독자 업데이트
+            if (channelMapper.findChannelById(channelId) != null) {
+                channelMapper.updateChannel(channelDto);
+            } else {
+                channelMapper.saveChannel(channelDto);
+            }
         }
+    }
 
+    // 재생목록에 없는 숏츠가져오기
+    public void saveShorts() throws GeneralSecurityException, IOException {
+
+        YouTube youtube = this.initYoutube();
+
+            YouTube.PlaylistItems.List request = youtube.playlistItems()
+                    .list("id,snippet,contentDetails, status")
+                    .setKey(youtubeApiKey)
+                    .setPlaylistId(uploadVideoId)
+                    .setMaxResults(50L);
+
+            String nextPageToken = null;
+            do {
+                if (nextPageToken != null)
+                    request.setPageToken(nextPageToken);
+
+                PlaylistItemListResponse response = request.execute();
+
+                System.out.println("responseSize :" + response.getItems().size());
+
+                for (PlaylistItem item : response.getItems()) {
+
+                    PlaylistItemSnippet snippet = item.getSnippet();
+                    JsonUtil.prettyString(snippet);
+                    PlaylistItemContentDetails contentDetails = item.getContentDetails();
+                    System.out.println("---------------------------");
+                    JsonUtil.prettyString(contentDetails);
+                    PlaylistItemStatus status = item.getStatus();
+                    System.out.println("---------------------------");
+                    JsonUtil.prettyString(status);
+
+                    String videoId = contentDetails.getVideoId();
+                    String note = contentDetails.getNote();
+                    System.out.println("note:" + note);
+
+                    // 숏츠영상 아닌거 넘어가기
+                    if (note != null && !note.contains("@shorts"))
+                        continue;
+
+                    String videoTitle =  snippet.getTitle();
+                    String type = "shorts";
+                    String saveThumb = "";
+
+                    if (item.getSnippet().getThumbnails().getHigh() != null) {
+                        saveThumb = item.getSnippet().getThumbnails().getHigh().getUrl();
+                    } else if (item.getSnippet().getThumbnails().getMedium() != null) {
+                        saveThumb = item.getSnippet().getThumbnails().getMedium().getUrl();
+                    } else if (item.getSnippet().getThumbnails().getDefault() != null){
+                        saveThumb = item.getSnippet().getThumbnails().getDefault().getUrl();
+                    }
+
+                    Long videoPosition = snippet.getPosition();
+                    System.out.println("videoPosition" + videoPosition);
+
+                    String videoStatus = status.getPrivacyStatus();
+                    System.out.println("videoStatus" + videoStatus);
+                    String videoUrl = "https://www.youtube.com/shorts/" + videoId;
+
+                    VideoDto videoDto = VideoDto.builder()
+                            .videoId(videoId)
+                            .videoTitle(videoTitle)
+                            .videoThumb(saveThumb)
+                            .videoUrl(videoUrl)
+                            .videoType(type)
+                            .videoPosition(videoPosition)
+                            .videoStatus(videoStatus)
+                            .build();
+
+                    System.out.println("Video ID: " + videoId);
+
+                    // 제목 깨짐 방지
+                    String normalized_string = Normalizer.normalize(videoDto.getVideoTitle(), Normalizer.Form.NFC);
+                    videoDto.setVideoTitle(normalized_string);
+
+                    // 동영상 제목, 재생표시 순서, 공개 상태 업데이트
+                    if (videoMapper.findByVideoId(videoId) != null) {
+                        videoMapper.updateVideo(videoDto);
+                    } else {
+                        videoMapper.saveVideo(videoDto);
+                    }
+                }
+                nextPageToken = response.getNextPageToken();
+
+            } while (nextPageToken != null);
     }
 
 
@@ -487,47 +563,5 @@ public class YoutubeApiService {
 
         log.info("res:");
         JsonUtil.prettyString(res);
-    }
-
-        public void test() throws GeneralSecurityException, IOException {
-
-        YouTube youtube = this.initYoutube();
-
-        YouTube.Videos.List request = youtube.videos()
-                .list("snippet,contentDetails,statistics")
-                .setId("4Zc-V3z79I4")
-                .setKey(youtubeApiKey);
-
-        VideoListResponse response = request.execute();
-
-        for (Video video : response.getItems()) {
-
-            VideoSnippet snippet = video.getSnippet();
-
-            String videoId = video.getId();
-            String title = snippet.getTitle();
-            String fullPath = "https://www.youtube.com/shorts/" + videoId;
-
-            String thumb = snippet.getThumbnails().getHigh().getUrl();
-
-
-
-            VideoDto videoDto = VideoDto.builder()
-                    .videoId(videoId)
-                    .videoTitle(title)
-                    .videoThumb(thumb)
-                    .videoUrl(fullPath)
-                    .videoType("shorts")
-                    .build();
-
-            // 문자열 깨짐 방지
-            String normalized_string = Normalizer.normalize(videoDto.getVideoTitle(), Normalizer.Form.NFC);
-            videoDto.setVideoTitle(normalized_string);
-
-            videoMapper.saveVideo(videoDto);
-
-            JsonUtil.prettyString(video);
-        }
-
     }
 }

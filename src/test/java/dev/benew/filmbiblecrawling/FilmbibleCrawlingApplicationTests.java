@@ -1,9 +1,7 @@
 package dev.benew.filmbiblecrawling;
 
-import dev.benew.filmbiblecrawling.service.VideoCrawlingService;
-import dev.benew.filmbiblecrawling.service.YoutubeApiService;
+import dev.benew.filmbiblecrawling.service.TotalCrawlingService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.hc.client5.http.auth.AuthStateCacheable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +14,7 @@ import java.security.GeneralSecurityException;
 class FilmbibleCrawlingApplicationTests {
 
     @Autowired
-    VideoCrawlingService  videoCrawlingService;
+    TotalCrawlingService videoCrawlingService;
 
     @Test
     void contextLoads() {

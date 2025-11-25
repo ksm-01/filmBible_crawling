@@ -16,4 +16,6 @@ public interface PlayListMapper {
     List<String> findAllPlayListId();
 
     Boolean savePlayList(PlayListDto playListDto);
+
+    Boolean updatePlayList(PlayListDto playListDto);
 }

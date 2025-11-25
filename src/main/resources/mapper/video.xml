@@ -29,6 +29,12 @@
         from FB_VIDEO
     </select>
 
+    <select id="findAllVideoId" resultType="String">
+        select
+            fb_video_id
+        from FB_VIDEO
+    </select>
+
     <select id="findByVideoId" resultMap="videoMap">
         select
             *
@@ -55,6 +61,15 @@
             #{videoStatus}
        )
     </insert>
+
+    <update id="updateVideo">
+        update FB_VIDEO
+        set
+            fb_video_title = #{videoTitle},
+            fb_video_position = #{videoPosition},
+            fb_video_status = #{videoStatus}
+        where fb_video_id = #{videoId}
+    </update>
 
     <update id="updateVideoDetailInfo">
         update FB_VIDEO

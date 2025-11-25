@@ -14,6 +14,7 @@ public class PlayListDto {
     private String playListThumb;
     private String playListFullPath;
     private Long videoCount;
+    private String playListStatus;
     private LocalDateTime regDate;
     private LocalDateTime createdDate;
 }

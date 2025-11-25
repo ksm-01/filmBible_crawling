@@ -8,6 +8,13 @@
         <result column="fb_vt_size_type" property="thumbType" />
     </resultMap>
 
+    <select id="findThumbById" resultMap="thumbMap">
+        select
+            *
+        from FB_VIDEO_THUMB
+        where fb_vt_video_id = #{videoId}
+    </select>
+
     <insert id="saveVideoThumb">
         insert into FB_VIDEO_THUMB
             (
@@ -23,4 +30,9 @@
                 )
             </foreach>
     </insert>
+
+    <delete id="deleteThumb">
+        delete from FB_VIDEO_THUMB
+        where fb_vt_video_id = #{videoId}
+    </delete>
 </mapper>

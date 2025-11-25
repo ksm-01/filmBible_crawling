@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 @Service
-public class VideoCrawlingService {
+public class TotalCrawlingService {
 
     private final YoutubeApiService youtubeApiService;
 
-    public VideoCrawlingService(YoutubeApiService youtubeApiService) {
+    public TotalCrawlingService(YoutubeApiService youtubeApiService) {
         this.youtubeApiService = youtubeApiService;
     }
 
@@ -22,8 +22,11 @@ public class VideoCrawlingService {
         // 재생목록의 영상들 저장
         youtubeApiService.newVideoCrawler();
 
+        // 숏츠만 가져오기
+        youtubeApiService.saveShorts();
+
         // 좋아요, 조회수, 재생시간 저장
-//        youtubeApiService.likeAndView();
+        youtubeApiService.likeAndView();
 
         // 비디오 썸네일 사이즈타입별 저장, 태그 저장
         youtubeApiService.saveThumb();
