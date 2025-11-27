@@ -9,6 +9,12 @@
         <result column="fb_channel_reg_date" property="channelRegDate" />
     </resultMap>
 
+    <select id="findAllChannelId" resultType="String">
+        select
+            fb_channel_id
+        from FB_CHANNEL
+    </select>
+
     <select id="findChannelById" resultMap="channelMap">
         select
             *

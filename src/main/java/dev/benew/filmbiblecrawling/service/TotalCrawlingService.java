@@ -16,19 +16,23 @@ public class TotalCrawlingService {
 
     public void crawlingTotal() throws GeneralSecurityException, IOException {
 
-        // 재생목록 저장
-        youtubeApiService.searchPlayList();
+        
+        // 채널 정보 저장, 업데이트(채널명,구독자 수)
+        youtubeApiService.upsertChannelInfo();
+        
+        // 재생목록 저장, 업데이트(제목,썸네일,동영상 개수, 노출상태)
+        youtubeApiService.upsertPlayList();
 
-        // 재생목록의 영상들 저장
-        youtubeApiService.newVideoCrawler();
+        // 재생목록의 영상들 저장,업데이트(제목,순서,노출상태)
+        youtubeApiService.upsertVideo();
 
-        // 숏츠만 가져오기
+        // 숏츠 저장,업데이트(제목,순서,노출상태)
         youtubeApiService.saveShorts();
 
-        // 좋아요, 조회수, 재생시간 저장
-        youtubeApiService.likeAndView();
+        // 재생시간, 조회수, 좋아요
+        youtubeApiService.updateVideoInfo();
 
-        // 비디오 썸네일 사이즈타입별 저장, 태그 저장
-        youtubeApiService.saveThumb();
+        // 비디오 썸네일(default, medium, high, standard, maxres), 태그 저장,업데이트
+        youtubeApiService.updateThumbAndTag();
     }
 }

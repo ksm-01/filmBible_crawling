@@ -8,6 +8,12 @@
         <result column="fb_vt_size_type" property="thumbType" />
     </resultMap>
 
+    <select id="findAllVideoIdsByThumb" resultType="String">
+        select
+            fb_vt_video_id
+        from FB_VIDEO_THUMB
+    </select>
+
     <select id="findThumbById" resultMap="thumbMap">
         select
             *

@@ -9,6 +9,8 @@ import java.util.List;
 @Mapper
 public interface ThumbMapper {
 
+    List<String> findAllVideoIdsByThumb();
+
     ThumbDto findThumbById(
             @Param("videoId") String videoId
     );

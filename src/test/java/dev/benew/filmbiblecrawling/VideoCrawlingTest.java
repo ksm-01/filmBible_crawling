@@ -16,39 +16,34 @@ public class VideoCrawlingTest {
     @Autowired
     YoutubeApiService youtubeApiService;
 
+    // 채널 정보
     @Test
     void channelInfo() throws GeneralSecurityException, IOException {
-        youtubeApiService.channelInfo();
+        youtubeApiService.upsertChannelInfo();
     }
 
     // 재생 목록 가져와서 저장하기
     @Test
     void findPlayList() throws GeneralSecurityException, IOException {
-        youtubeApiService.searchPlayList();
+        youtubeApiService.upsertPlayList();
     }
 
     // 재생목록 비디오 저장
     @Test
     void saveVideo() throws GeneralSecurityException, IOException {
-        youtubeApiService.newVideoCrawler();
+        youtubeApiService.upsertVideo();
     }
 
     // 좋아요 조회수, 재생시간 저장
     @Test
     void updateVideo() throws GeneralSecurityException, IOException {
-        youtubeApiService.likeAndView();
+        youtubeApiService.updateVideoInfo();
     }
 
     // 썸네일, 태그 저장
     @Test
     void saveThumb() throws GeneralSecurityException, IOException {
-        youtubeApiService.saveThumb();
-    }
-
-
-    @Test
-    void channlInfo() throws GeneralSecurityException, IOException {
-        youtubeApiService.channelInfo();
+        youtubeApiService.updateThumbAndTag();
     }
 
 

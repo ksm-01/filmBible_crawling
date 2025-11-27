@@ -7,6 +7,12 @@
         <result column="fb_vt_order" property="tagOrder" />
     </resultMap>
 
+    <select id="findAllVideoIdsByTag" resultType="String">
+        select
+            fb_vt_video_id
+        from FB_VIDEO_TAG
+    </select>
+
     <select id="findTagById" resultMap="tagMap">
         select
             *

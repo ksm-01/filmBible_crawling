@@ -13,6 +13,8 @@ public interface ChannelMapper {
             @Param("channelId") String channelId
     );
 
+    List<String> findAllChannelId();
+
     Boolean saveChannel(ChannelDto channelDto);
 
     Boolean updateChannel(ChannelDto channelDto);

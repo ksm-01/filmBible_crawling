@@ -50,6 +50,7 @@
         update FB_PLAYLIST
             set
                 fb_playlist_title = #{playListTitle},
+                fb_playlist_thumb = #{playListThumb},
                 fb_playlist_video_count = #{videoCount},
                 fb_playlist_status  = #{playListStatus}
             where fb_playlist_id = #{playListId}
