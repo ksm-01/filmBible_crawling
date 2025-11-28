@@ -66,6 +66,8 @@
         update FB_VIDEO
         set
             fb_video_title = #{videoTitle},
+            fb_video_type = #{videoType},
+            fb_video_full_path = #{videoUrl},
             fb_video_position = #{videoPosition},
             fb_video_status = #{videoStatus}
         where fb_video_id = #{videoId}

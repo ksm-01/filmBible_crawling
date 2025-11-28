@@ -34,6 +34,12 @@ public class VideoCrawlingTest {
         youtubeApiService.upsertVideo();
     }
 
+    // 숏츠 영상들만 가져오기
+    @Test
+    void shorts() throws GeneralSecurityException, IOException {
+        youtubeApiService.saveShorts();
+    }
+
     // 좋아요 조회수, 재생시간 저장
     @Test
     void updateVideo() throws GeneralSecurityException, IOException {
@@ -52,11 +58,6 @@ public class VideoCrawlingTest {
     void findChannel() throws GeneralSecurityException, IOException {
         youtubeApiService.searchChannel("필름바이블");
     }
-    
-    // 숏츠 영상들만 가져오기
-   @Test
-    void shorts() throws GeneralSecurityException, IOException {
-        youtubeApiService.saveShorts();
-    }
+
 
 }

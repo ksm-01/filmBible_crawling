@@ -5,6 +5,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.*;
+import dev.benew.filmbiblecrawling.VideoType;
 import dev.benew.filmbiblecrawling.dto.ChannelDto;
 import dev.benew.filmbiblecrawling.dto.PlayListDto;
 import dev.benew.filmbiblecrawling.dto.ThumbDto;
@@ -42,14 +43,16 @@ public class YoutubeApiService {
     private final PlayListHasVideoMapper phvMapper;
     private final ThumbMapper thumbMapper;
     private final TagMapper tagMapper;
+    private final ShortsCheckService shortsCheckService;
 
-    public YoutubeApiService(ChannelMapper channelMapper, PlayListMapper playListMapper, VideoMapper videoMapper, PlayListHasVideoMapper phvMapper, ThumbMapper thumbMapper, TagMapper tagMapper) {
+    public YoutubeApiService(ChannelMapper channelMapper, PlayListMapper playListMapper, VideoMapper videoMapper, PlayListHasVideoMapper phvMapper, ThumbMapper thumbMapper, TagMapper tagMapper, ShortsCheckService shortsCheckService) {
         this.channelMapper = channelMapper;
         this.playListMapper = playListMapper;
         this.videoMapper = videoMapper;
         this.phvMapper = phvMapper;
         this.thumbMapper = thumbMapper;
         this.tagMapper = tagMapper;
+        this.shortsCheckService = shortsCheckService;
     }
 
     private YouTube initYoutube() throws GeneralSecurityException, IOException {
@@ -153,6 +156,7 @@ public class YoutubeApiService {
 
         Set<String> videoIdSet = new HashSet<>(videoMapper.findAllVideoId());
 
+        String videoUrl = VideoType.Video.getUrl();
 
         for (String playlistId : idList) {
                 YouTube.PlaylistItems.List request = youtube.playlistItems()
@@ -168,28 +172,27 @@ public class YoutubeApiService {
 
                 PlaylistItemListResponse response = request.execute();
 
-                System.out.println("responseSize :" + response.getItems().size());
-
                 for (PlaylistItem item : response.getItems()) {
 
                     PlaylistItemSnippet snippet = item.getSnippet();
-                    JsonUtil.prettyString(snippet);
+//                    JsonUtil.prettyString(snippet);
                     PlaylistItemContentDetails contentDetails = item.getContentDetails();
-                    System.out.println("---------------------------");
-                    JsonUtil.prettyString(contentDetails);
+//                    System.out.println("---------------------------");
+//                    JsonUtil.prettyString(contentDetails);
                     PlaylistItemStatus status = item.getStatus();
-                    System.out.println("---------------------------");
-                    JsonUtil.prettyString(status);
+//                    System.out.println("---------------------------");
+//                    JsonUtil.prettyString(status);
 
                     String videoId = contentDetails.getVideoId();
-                    String note = contentDetails.getNote();
-                    String type = "video";
+//                    String note = contentDetails.getNote();
+                    String type = VideoType.Video.name();
 
                     // shorts 판별
-                    if (note != null && note.contains("@shorts")) {
-                        type = "shorts";
-                    }
-                    System.out.println("note:" + note);
+//                    if (note != null && note.contains("@shorts")) {
+//                        type = VideoType.Shorts.name();
+//                    }
+//
+//                    System.out.println("note:" + note);
 
 
                     String videoTitle =  snippet.getTitle();
@@ -205,17 +208,14 @@ public class YoutubeApiService {
                     }
 
                     Long videoPosition = snippet.getPosition();
-                    System.out.println("videoPosition" + videoPosition);
-
                     String videoStatus = status.getPrivacyStatus();
-                    System.out.println("videoStatus" + videoStatus);
-                    String videoUrl = "https://www.youtube.com/watch?v=" + videoId;
+                    String videoFullUrl = videoUrl + videoId;
 
                     VideoDto videoDto = VideoDto.builder()
                             .videoId(videoId)
                             .videoTitle(videoTitle)
                             .videoThumb(saveThumb)
-                            .videoUrl(videoUrl)
+                            .videoUrl(videoFullUrl)
                             .videoType(type)
                             .videoPosition(videoPosition)
                             .videoStatus(videoStatus)
@@ -462,6 +462,8 @@ public class YoutubeApiService {
 
         Set<String> videoIdSet = new HashSet<>(videoMapper.findAllVideoId());
 
+        String shortsUrl = VideoType.Shorts.getUrl();
+
             YouTube.PlaylistItems.List request = youtube.playlistItems()
                     .list("id,snippet,contentDetails, status")
                     .setKey(youtubeApiKey)
@@ -475,29 +477,29 @@ public class YoutubeApiService {
 
                 PlaylistItemListResponse response = request.execute();
 
-                System.out.println("responseSize :" + response.getItems().size());
 
                 for (PlaylistItem item : response.getItems()) {
 
                     PlaylistItemSnippet snippet = item.getSnippet();
-                    JsonUtil.prettyString(snippet);
+//                    JsonUtil.prettyString(snippet);
                     PlaylistItemContentDetails contentDetails = item.getContentDetails();
-                    System.out.println("---------------------------");
-                    JsonUtil.prettyString(contentDetails);
+//                    System.out.println("---------------------------");
+//                    JsonUtil.prettyString(contentDetails);
                     PlaylistItemStatus status = item.getStatus();
-                    System.out.println("---------------------------");
-                    JsonUtil.prettyString(status);
+//                    System.out.println("---------------------------");
+//                    JsonUtil.prettyString(status);
 
+//                    String note = contentDetails.getNote();
                     String videoId = contentDetails.getVideoId();
-                    String note = contentDetails.getNote();
-                    System.out.println("note:" + note);
+                    String shortsFullUrl = shortsUrl + videoId;
 
                     // 숏츠영상 아닌거 넘어가기
-                    if (note != null && !note.contains("@shorts"))
+                    if (!shortsCheckService.shortsUrlCheck(shortsFullUrl, videoId)) {
                         continue;
+                    }
 
                     String videoTitle =  snippet.getTitle();
-                    String type = "shorts";
+                    String type = VideoType.Shorts.name();
                     String saveThumb = "";
 
                     if (item.getSnippet().getThumbnails().getHigh() != null) {
@@ -509,29 +511,26 @@ public class YoutubeApiService {
                     }
 
                     Long videoPosition = snippet.getPosition();
-                    System.out.println("videoPosition" + videoPosition);
+//                    System.out.println("videoPosition" + videoPosition);
 
                     String videoStatus = status.getPrivacyStatus();
-                    System.out.println("videoStatus" + videoStatus);
-                    String videoUrl = "https://www.youtube.com/shorts/" + videoId;
+//                    System.out.println("videoStatus" + videoStatus);
 
                     VideoDto videoDto = VideoDto.builder()
                             .videoId(videoId)
                             .videoTitle(videoTitle)
                             .videoThumb(saveThumb)
-                            .videoUrl(videoUrl)
+                            .videoUrl(shortsFullUrl)
                             .videoType(type)
                             .videoPosition(videoPosition)
                             .videoStatus(videoStatus)
                             .build();
 
-                    System.out.println("Video ID: " + videoId);
-
                     // 제목 깨짐 방지
                     String normalized_string = Normalizer.normalize(videoDto.getVideoTitle(), Normalizer.Form.NFC);
                     videoDto.setVideoTitle(normalized_string);
 
-                    // 동영상 제목, 재생표시 순서, 공개 상태 업데이트
+                    // 동영상 제목, 재생표시 순서, 공개 상태, videoType, videoUrl 업데이트
                     if (videoIdSet.contains(videoId)) {
                         videoMapper.updateVideo(videoDto);
                     } else {
