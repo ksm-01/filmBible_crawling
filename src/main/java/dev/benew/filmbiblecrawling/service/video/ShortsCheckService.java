@@ -1,4 +1,4 @@
-package dev.benew.filmbiblecrawling.service;
+package dev.benew.filmbiblecrawling.service.video;
 
 import org.springframework.stereotype.Service;
 

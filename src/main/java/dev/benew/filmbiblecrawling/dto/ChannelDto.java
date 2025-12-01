@@ -14,4 +14,5 @@ public class ChannelDto {
 
     private LocalDateTime createdDate;
     private LocalDateTime channelRegDate;
+    private LocalDateTime refreshDate;
 }

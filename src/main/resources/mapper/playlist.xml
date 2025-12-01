@@ -52,7 +52,8 @@
                 fb_playlist_title = #{playListTitle},
                 fb_playlist_thumb = #{playListThumb},
                 fb_playlist_video_count = #{videoCount},
-                fb_playlist_status  = #{playListStatus}
+                fb_playlist_status  = #{playListStatus},
+                fb_playlist_refresh_date = now()
             where fb_playlist_id = #{playListId}
     </update>
 

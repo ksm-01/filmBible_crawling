@@ -22,13 +22,17 @@ public interface VideoMapper {
 
     Boolean updateVideo(VideoDto videoDto);
 
+//    Boolean updateVideoDetailInfo(
+//            @Param("id") String id,
+//            @Param("playTime") LocalTime playTime,
+//            @Param("createdDate") LocalDateTime createdDate,
+//            @Param("viewDisable") Boolean viewDisable,
+//            @Param("view") Long view,
+//            @Param("likeDisable") Boolean likeDisable,
+//            @Param("like") Long like
+//    );
+
     Boolean updateVideoDetailInfo(
-            @Param("id") String id,
-            @Param("playTime") LocalTime playTime,
-            @Param("createdDate") LocalDateTime createdDate,
-            @Param("viewDisable") Boolean viewDisable,
-            @Param("view") Long view,
-            @Param("likeDisable") Boolean likeDisable,
-            @Param("like") Long like
+            VideoDto videoDto
     );
 }

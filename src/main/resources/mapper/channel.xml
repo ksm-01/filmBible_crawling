@@ -7,6 +7,7 @@
         <result column="fb_channel_subscriber" property="channelSubscriber" />
         <result column="fb_channel_created_date" property="createdDate" />
         <result column="fb_channel_reg_date" property="channelRegDate" />
+        <result column="fb_channel_refresh_date" property="" />
     </resultMap>
 
     <select id="findAllChannelId" resultType="String">
@@ -40,7 +41,8 @@
         update FB_CHANNEL
             set
                 fb_channel_name = #{channelName},
-                fb_channel_subscriber = #{channelSubscriber}
+                fb_channel_subscriber = #{channelSubscriber},
+                fb_channel_refresh_date = now()
         where fb_channel_id = #{channelId}
     </update>
 

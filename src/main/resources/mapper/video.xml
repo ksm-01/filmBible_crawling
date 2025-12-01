@@ -77,16 +77,16 @@
         update FB_VIDEO
         set
                 fb_video_play_time= #{playTime},
-                fb_video_created_date = #{createdDate},
+                fb_video_created_date = #{videoCreateDate},
                 fb_video_view_disable = #{viewDisable},
                 fb_video_like_disable = #{likeDisable},
-                <if test="view != null">
-                    fb_video_view = #{view},
+                <if test="videoView != null">
+                    fb_video_view = #{videoView},
                 </if>
-                <if test="like != null">
-                    fb_video_like = #{like},
+                <if test="videoLike != null">
+                    fb_video_like = #{videoLike},
                 </if>
                 fb_video_refresh_date = now()
-        where fb_video_id = #{id}
+        where fb_video_id = #{videoId}
     </update>
 </mapper>
