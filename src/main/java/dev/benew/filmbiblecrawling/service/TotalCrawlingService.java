@@ -31,7 +31,8 @@ public class TotalCrawlingService {
 
 
         // 채널 정보 저장, 업데이트(채널명,구독자 수)
-        channelService.upsertChannelInfo();
+//        channelService.upsertChannelInfo();
+        channelService.updateChannelInfo();
 
         // 재생목록 저장, 업데이트(제목,썸네일,동영상 개수, 노출상태)
         playListService.upsertPlayList();

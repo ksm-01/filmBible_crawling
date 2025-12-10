@@ -63,7 +63,7 @@ public class YoutubeApiService {
 
         YouTube.Channels.List req = youtube.channels()
                 .list("id, snippet, statistics")
-                .setId("UCijh44bpBtXO52xkLhb9vUQ")
+                .setId(channelId)
                 .setKey(youtubeApiKey);
 
         return req.execute();

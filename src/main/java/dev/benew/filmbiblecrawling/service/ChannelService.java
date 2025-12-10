@@ -15,6 +15,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -28,23 +29,30 @@ public class ChannelService {
         this.channelMapper = channelMapper;
     }
 
+     public void updateChannelInfo() throws GeneralSecurityException, IOException {
+        ChannelListResponse response =  youtubeApiService.channelApi();
+        Channel channel = response.getItems().get(0);
+        ChannelDto channelDto = this.convertChnnelDto(channel);
+        channelMapper.updateChannel(channelDto);
+     }
 
-    public void upsertChannelInfo() throws GeneralSecurityException, IOException {
-        Set<String> channelIdSet = new HashSet<>(channelMapper.findAllChannelId());
 
-        ChannelListResponse response = youtubeApiService.channelApi();
-
-        for (Channel channel : response.getItems()) {
-            ChannelDto channelDto = this.convertChnnelDto(channel);
-            // 채널명, 구독자 업데이트
-            if (channelIdSet.contains(channelDto.getChannelId())) {
-                channelMapper.updateChannel(channelDto);
-            } else {
-                channelMapper.saveChannel(channelDto);
-                channelIdSet.add(channelDto.getChannelId());
-            }
-        }
-    }
+//    public void upsertChannelInfo() throws GeneralSecurityException, IOException {
+//        Set<String> channelIdSet = new HashSet<>(channelMapper.findAllChannelId());
+//
+//        ChannelListResponse response = youtubeApiService.channelApi();
+//
+//        for (Channel channel : response.getItems()) {
+//            ChannelDto channelDto = this.convertChnnelDto(channel);
+//            // 채널명, 구독자 업데이트
+//            if (channelIdSet.contains(channelDto.getChannelId())) {
+//                channelMapper.updateChannel(channelDto);
+//            } else {
+//                channelMapper.saveChannel(channelDto);
+//                channelIdSet.add(channelDto.getChannelId());
+//            }
+//        }
+//    }
 
     protected ChannelDto convertChnnelDto(Channel channel) {
         ChannelSnippet snippet = channel.getSnippet();

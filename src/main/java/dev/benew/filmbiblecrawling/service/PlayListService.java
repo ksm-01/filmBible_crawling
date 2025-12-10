@@ -37,7 +37,6 @@ public class PlayListService {
         PlaylistListResponse response = youtubeApiService.playListApi();
 
         for (Playlist playlistItem : response.getItems()) {
-
             PlayListDto playListDto = this.convertPlayListDto(playlistItem);
 
             if (playListIdSet.contains(playListDto.getPlayListId())) {
@@ -47,7 +46,6 @@ public class PlayListService {
                 playListIdSet.add(playListDto.getPlayListId());  // 처음에 가져온 id 최신화
                 System.out.println("새로 저장된 재생목록 ID: " + playListDto.getPlayListId());
             }
-
         }
     }
 

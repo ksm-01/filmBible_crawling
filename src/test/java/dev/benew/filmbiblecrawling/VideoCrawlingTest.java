@@ -33,7 +33,7 @@ public class VideoCrawlingTest {
 //    // 채널 정보
     @Test
     void channelInfo() throws GeneralSecurityException, IOException {
-        channelService.upsertChannelInfo();
+        channelService.updateChannelInfo();
     }
 
 
