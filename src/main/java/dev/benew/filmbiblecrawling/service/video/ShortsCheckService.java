@@ -10,7 +10,7 @@ import java.net.URL;
 public class ShortsCheckService {
 
 
-    public Boolean shortsUrlCheck(String shortsUrl, String videoId) {
+    public Boolean shortsUrlCheck(String shortsUrl) {
 
         try {
             URL url = new URL(shortsUrl);

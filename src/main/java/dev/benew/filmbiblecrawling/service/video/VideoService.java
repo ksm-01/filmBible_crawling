@@ -14,7 +14,9 @@ import java.security.GeneralSecurityException;
 import java.text.Normalizer;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class VideoService {
@@ -54,12 +56,12 @@ public class VideoService {
                 String videoType = VideoType.Video.name();
 
                 videoDto.setVideoUrl(videoFullUrl);
-                videoDto.setVideoType(videoType);
 
                 // 동영상 제목, 재생표시 순서, 공개 상태 업데이트
                 if (videoIdSet.contains(videoDto.getVideoId())) {
                     videoMapper.updateVideo(videoDto);
                 } else {
+                    videoDto.setVideoType(videoType);
                     videoMapper.saveVideo(videoDto);
                     videoIdSet.add(videoDto.getVideoId());
                     // 재생목록, 비디오 연결
@@ -78,7 +80,15 @@ public class VideoService {
 
         System.out.println("shorts 가져오기 시작 ----------------------------");
 
-        Set<String> videoIdSet = new HashSet<>(videoMapper.findAllVideoId());
+//        Set<String> videoIdSet = new HashSet<>(videoMapper.findAllVideoId());
+        List<VideoDto> videoList = videoMapper.findAllVideo();
+        Map<String, String> videoMap = videoList.stream()
+                .collect(Collectors.toMap(
+                        VideoDto :: getVideoId,
+                        VideoDto :: getVideoType
+                ));
+
+        System.out.println("videoMap :" + videoMap);
 
         List<PlaylistItem> response = youtubeApiService.playListItemApi(null);
 
@@ -90,7 +100,7 @@ public class VideoService {
             String videoFullUrl = videoUrl + videoDto.getVideoId();
             String videoType = VideoType.Shorts.name();
 
-            if (!shortsCheckService.shortsUrlCheck(videoFullUrl, videoDto.getVideoId())) {
+            if (!shortsCheckService.shortsUrlCheck(videoFullUrl)) {
                 continue;
             }
 
@@ -98,14 +108,26 @@ public class VideoService {
             videoDto.setVideoType(videoType);
 
             // 동영상 제목, 재생표시 순서, 공개 상태 업데이트
-            if (videoIdSet.contains(videoDto.getVideoId())) {
-                videoMapper.updateVideo(videoDto);
-                System.out.println("shorts로 업데이트한 ID : " + videoDto.getVideoId());
+            if (videoMap.containsKey(videoDto.getVideoId())) {
+                if (VideoType.Video.name().equals(videoMap.get(videoDto.getVideoId()))) {
+                    videoMapper.updateVideo(videoDto);
+                    System.out.println("map value: " + videoMap.get(videoDto.getVideoId()));
+                    System.out.println("shorts로 업데이트한 ID : " + videoDto.getVideoId());
+                }
             } else {
                 videoMapper.saveVideo(videoDto);
-                videoIdSet.add(videoDto.getVideoId());
+                videoMap.put(videoDto.getVideoId(), videoDto.getVideoType());
                 System.out.println("새로 저장된 shorts ID : " + videoDto.getVideoId());
             }
+
+//            if (videoIdSet.contains(videoDto.getVideoId())) {
+//                videoMapper.updateVideo(videoDto);
+//                System.out.println("shorts로 업데이트한 ID : " + videoDto.getVideoId());
+//            } else {
+//                videoMapper.saveVideo(videoDto);
+//                videoIdSet.add(videoDto.getVideoId());
+//                System.out.println("새로 저장된 shorts ID : " + videoDto.getVideoId());
+//            }
         }
     }
 

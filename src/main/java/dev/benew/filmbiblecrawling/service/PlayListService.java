@@ -80,11 +80,11 @@ public class PlayListService {
 
         String playlistUrl = "https://www.youtube.com/playlist?list=" + playListId;
         String show = status.getPrivacyStatus();  // 재생목록 공개상태
-        System.out.println("show :" + show);
+//        System.out.println("show :" + show);
 
         // 재생목록에 있는 동영상 개수
         Long videoCount = contentDetails.getItemCount();
-        System.out.println("vicdeoCount:" + videoCount);
+//        System.out.println("vicdeoCount:" + videoCount);
 
 
         // 문자열 깨짐 방지

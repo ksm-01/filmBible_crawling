@@ -29,6 +29,7 @@ public class ChannelService {
         this.channelMapper = channelMapper;
     }
 
+    // 필름바이블 채널 정보만
      public void updateChannelInfo() throws GeneralSecurityException, IOException {
         ChannelListResponse response =  youtubeApiService.channelApi();
         Channel channel = response.getItems().get(0);

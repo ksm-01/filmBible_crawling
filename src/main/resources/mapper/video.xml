@@ -66,7 +66,9 @@
         update FB_VIDEO
         set
             fb_video_title = #{videoTitle},
-            fb_video_type = #{videoType},
+            <if test="videoType != null">
+                fb_video_type = #{videoType},
+            </if>
             fb_video_full_path = #{videoUrl},
             fb_video_position = #{videoPosition},
             fb_video_status = #{videoStatus}

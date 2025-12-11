@@ -30,6 +30,7 @@ public class UpdateVideoInfoService {
 
         List<VideoDto> videoList = videoMapper.findAllVideo();
 
+        // 50개씩 처리 (youtube api가 50개씩 가능함)
         for (int i = 0; i < videoList.size(); i += 50) {
             List<VideoDto> chunkList = videoList.subList(i, Math.min(i + 50, videoList.size()));
 
