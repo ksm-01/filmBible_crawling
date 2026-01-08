@@ -61,6 +61,11 @@ public class VideoCrawlingTest {
         videoInfoService.updateVideoInfo();
     }
 
+    @Test
+    void categories() throws GeneralSecurityException, IOException {
+        videoService.getCateInfo();
+    }
+
     // 썸네일, 태그 저장
 //    @Test
 //    void saveThumb() throws GeneralSecurityException, IOException {
@@ -73,6 +78,8 @@ public class VideoCrawlingTest {
 //    void findChannel() throws GeneralSecurityException, IOException {
 //        youtubeApiService.searchChannel("필름바이블");
 //    }
+
+
 
 
 }

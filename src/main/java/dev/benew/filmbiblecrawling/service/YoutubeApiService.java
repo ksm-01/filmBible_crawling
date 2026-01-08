@@ -120,10 +120,25 @@ public class YoutubeApiService {
         YouTube youtube = this.initYoutube();
 
         YouTube.Videos.List req = youtube.videos()
-                .list("snippet,contentDetails,statistics")
+                .list("snippet,contentDetails,statistics,player")
                 .setId(String.join(",", videoIds))
                 .setKey(youtubeApiKey);
         return req.execute();
+    }
+
+    // 카테고리 정보 가져오기
+    public VideoCategoryListResponse categories() throws GeneralSecurityException, IOException {
+        YouTube youtube = this.initYoutube();
+
+        YouTube.VideoCategories.List req = youtube.videoCategories()
+                .list("snippet")
+                .setId("19,22,24,26")
+//                .setRegionCode("KR")
+                .setHl("ko")
+                .setKey(youtubeApiKey);
+
+        return req.execute();
+
     }
 
 }

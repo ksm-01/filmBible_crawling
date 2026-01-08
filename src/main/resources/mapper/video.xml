@@ -13,9 +13,10 @@
         <result column="fb_video_view" property="videoView" />
         <result column="fb_video_view_disable" property="viewDisable" />
         <result column="fb_video_like" property="videoLike" />
-        <result column="fb_video_like_disable" property="viewDisable" />
+        <result column="fb_video_like_disable" property="likeDisable" />
         <result column="fb_video_position" property="videoPosition" />
         <result column="fb_video_status" property="videoStatus" />
+        <result column="fb_video_embedUrl" property="embedUrl" />
 
         <result column="fb_video_created_date" property="videoCreateDate" />
         <result column="fb_video_reg_date" property="videoRegDate" />
@@ -69,7 +70,12 @@
             <if test="videoType != null">
                 fb_video_type = #{videoType},
             </if>
-            fb_video_full_path = #{videoUrl},
+            <if test="videoUrl != null">
+                fb_video_full_path = #{videoUrl},
+            </if>
+            <if test="videoThumb != null">
+                fb_video_thumb = #{videoThumb},
+            </if>
             fb_video_position = #{videoPosition},
             fb_video_status = #{videoStatus}
         where fb_video_id = #{videoId}
@@ -88,7 +94,14 @@
                 <if test="videoLike != null">
                     fb_video_like = #{videoLike},
                 </if>
+                fb_video_embed_url = #{embedUrl},
                 fb_video_refresh_date = now()
         where fb_video_id = #{videoId}
     </update>
+
+    <delete id="deleteVideo">
+        delete from FB_VIDEO
+        where fb_video_id = #{videoId}
+    </delete>
+
 </mapper>

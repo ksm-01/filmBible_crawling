@@ -23,6 +23,7 @@ public class VideoDto {
    private Boolean likeDisable;
    private Long videoPosition;
    private String videoStatus;
+   private String embedUrl;
 
    private LocalDateTime videoCreateDate;
    private LocalDateTime videoRegDate;

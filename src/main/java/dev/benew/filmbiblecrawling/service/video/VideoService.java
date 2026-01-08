@@ -59,6 +59,7 @@ public class VideoService {
 
                 // 동영상 제목, 재생표시 순서, 공개 상태 업데이트
                 if (videoIdSet.contains(videoDto.getVideoId())) {
+                    videoDto.setVideoUrl(null);
                     videoMapper.updateVideo(videoDto);
                 } else {
                     videoDto.setVideoType(videoType);
@@ -144,6 +145,9 @@ public class VideoService {
 
         String videoThumb = null;
 
+        if (contentDetails.getVideoId().equals("WtY7IJkEnvM"))
+            System.out.println("thumbnail : " + snippet.getThumbnails());
+
         if (snippet.getThumbnails().getHigh() != null) {
             videoThumb = snippet.getThumbnails().getHigh().getUrl();
         } else if (snippet.getThumbnails().getMedium() != null) {
@@ -167,5 +171,12 @@ public class VideoService {
                 .build();
     }
 
+
+    // 카테고리
+    public void getCateInfo() throws GeneralSecurityException, IOException {
+        List<VideoCategory>  item = youtubeApiService.categories().getItems();
+        System.out.println("category" + item);
+
+    }
 
 }

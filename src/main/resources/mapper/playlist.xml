@@ -17,6 +17,9 @@
         select
             fb_playlist_id
         from FB_PLAYLIST
+        ORDER BY
+            fb_playlist_idx = 1 desc,
+            fb_playlist_idx = 3 desc
     </select>
 
     <select id="findByPlayListId" resultMap="playListMap">

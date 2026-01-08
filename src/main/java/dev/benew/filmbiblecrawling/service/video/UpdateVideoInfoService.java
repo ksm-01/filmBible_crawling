@@ -5,6 +5,9 @@ import com.google.api.services.youtube.model.*;
 import dev.benew.filmbiblecrawling.dto.VideoDto;
 import dev.benew.filmbiblecrawling.mapper.VideoMapper;
 import dev.benew.filmbiblecrawling.service.YoutubeApiService;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -60,6 +63,21 @@ public class UpdateVideoInfoService {
         VideoStatistics statistics = video.getStatistics();
         VideoContentDetails details = video.getContentDetails();
         VideoSnippet snippet = video.getSnippet();
+        VideoPlayer player = video.getPlayer();
+
+        String embedHtml = player.getEmbedHtml();
+        System.out.println("embedHtml" + embedHtml);
+
+        Document doc = Jsoup.parseBodyFragment(embedHtml);
+        Element iframe = doc.selectFirst("iframe");
+
+        String src = iframe.attr("src");
+
+        if (src.startsWith("//")) {
+            src = "https:"+src;
+        }
+
+        System.out.println("src " + src);
 
         // details 없으면 비공개 영상일수도
         if (details == null || details.getDuration() == null) {
@@ -101,6 +119,7 @@ public class UpdateVideoInfoService {
                 .videoView(view)
                 .likeDisable(likeDisable)
                 .videoLike(like)
+                .embedUrl(src)
                 .build();
     }
 
